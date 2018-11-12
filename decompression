@@ -1,0 +1,40 @@
+# Decompress.py
+import struct
+def decompress(compressed):
+# Initialize the Dictionary.
+from io import StringIO
+dict_size = 128
+dictionary = {i: chr(i) for i in range(dict_size)}
+result = StringIO()
+w = chr(compressed.pop(0))
+result.write(w)
+for k in compressed:
+if k in dictionary:
+entry = dictionary[k]
+elif k == dict_size:
+entry = w + w[0]
+else:
+raise ValueError(&#39;Bad compressed k: %s&#39; % k)
+result.write(entry)
+dictionary[dict_size] = w + entry[0]
+
+dict_size += 1
+w = entry
+return result.getvalue()
+# End of function Decompress
+
+name=input(&quot;Enter Compressed File Name : &quot;)
+values=[]
+with open(&quot;Compressed Files/&quot;+name, &#39;rb&#39;) as file:
+fileContent = file.read()
+values=struct.unpack(&quot;i&quot; * ((len(fileContent)) // 4), fileContent[:])
+name=name[:-3]
+values=list(values)
+decompressed = decompress(values)
+f= open(&quot;Decoded Files/&quot;+name+&quot;txt&quot;,&quot;w+&quot;)
+f.write(&quot;%s&quot; %decompressed)
+print(name+&quot;lzw Compressed File Size = &quot;+str(len(fileContent))+&quot; bytes&quot;)
+print(name+&quot;lzw Decompressed !&quot;)
+print(name+&quot;txt Created. File Size = &quot;+str(len(decompressed))+&quot; bytes&quot; )
+file.close()
+f.close()
